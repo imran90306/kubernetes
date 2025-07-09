@@ -1,0 +1,5 @@
+if we have 3 workernodes namely workernode1, workernode2, workernode3
+Before applying the taint and toleration u have one pode running on workernode1 then u apply taint and toleration to the node1
+then it will evict all the pods that doesnt matches the toleration
+
+

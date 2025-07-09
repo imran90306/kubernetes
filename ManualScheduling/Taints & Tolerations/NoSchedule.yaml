@@ -1,0 +1,58 @@
+Taint is applied on the workernode and toleration is given to the pod definition file 
+to apply the taint on the worker-node we use the below command
+          kubectl taint node <nodename> key=value:effect
+example:  kubectl taint node ip-192-168-48-58.us-east-2.compute.internal node=mynode1:NoSchedule
+   
+Effects: 
+1.NoSchedule
+2.NoExecute
+3.PreferNoSchedule
+
+Case1> if we have three worker nodes then we apply taint on each worker node and then give toleration in the 
+pod-definition yaml file then the pod will be deployed on the particular worker-node 
+
+if u applied taint like this 
+node=mynode1:NoSchedule
+
+✅ Pod Definition File with Toleration
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-toleration
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  tolerations:
+  - key: "node"
+    operator: "Equal"
+    value: "mynode1"
+    effect: "NoSchedule"
+
+
+Case2> if u have 3 worker-nodes ------>workernode1, workernode2,workernode3 and u applied a toleration on workernode1 and remaining two is free 
+if u applied toleration in the yaml file Either it might be deploy the pod on specfied workernode (node1) or  it may deployed on the other 
+two-nodes which are free from taint
+
+NAME                                           STATUS   ROLES    AGE   VERSION
+ip-192-168-14-49.us-east-2.compute.internal    Ready    <none>   6d    v1.32.3-eks-473151a ----taint applied 
+ip-192-168-43-109.us-east-2.compute.internal   Ready    <none>   6d    v1.32.3-eks-473151a ----No taint applied
+ip-192-168-48-58.us-east-2.compute.internal    Ready    <none>   21h   v1.32.3-eks-473151a ----No taint applied 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

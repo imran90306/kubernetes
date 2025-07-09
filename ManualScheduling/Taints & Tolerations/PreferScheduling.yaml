@@ -1,0 +1,18 @@
+if we use PreferNoScheduling Taint  
+if u have 3 worker-nodes with only node1 having taint and other 2 workernodes are free if u 
+apply toleration in pod-def-file it may deploy the pod in the nodes which are free 
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-toleration
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  tolerations:
+  - key: "node"
+    operator: "Equal"
+    value: "mynode1"
+    effect: "PreferNoSchedule"

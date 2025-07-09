@@ -4,7 +4,7 @@ apply toleration in pod-def-file it may deploy the pod in the nodes which are fr
 The scheduler tries to avoid such nodes(tainted) if possible, but will schedule on them if no untainted nodes exist.
 
 if u applied taint like this 
-node=mynode1:NoSchedule
+node=mynode1:PreferScheduling
 
 ✅ Pod Definition File with Toleration
 

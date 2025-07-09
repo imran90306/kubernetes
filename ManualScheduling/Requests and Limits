@@ -1,0 +1,95 @@
+Dveloper created one application he mentions  and how much memory 
+
+📚 Binary vs Decimal Units
+There are two systems used for measuring digital storage:
+
+Type	Name	Based on	Multiplier	Abbreviation
+Binary	Kibibyte	Powers of 2	1 KiB = 1024 B	KiB
+Mebibyte		1 MiB = 1024 KiB = 1,048,576 B	MiB
+Gibibyte		1 GiB = 1024 MiB = 1,073,741,824 B	GiB
+Decimal	Kilobyte	Powers of 10	1 KB = 1000 B	KB
+Megabyte		1 MB = 1000 KB = 1,000,000 B	MB
+Gigabyte		1 GB = 1000 MB = 1,000,000,000 B	GB
+
+1 GiB ≈ 1.074 GB
+
+1 MiB ≈ 1.048 MB
+
+1 KiB ≈ 1.024 KB
+
+🛠 Why does Kubernetes use MiB, GiB?
+Kubernetes, like Linux, uses binary units to be precise. If it says 1Gi, it really means 1024 × 1024 × 1024 bytes, not 1 billion bytes. This avoids ambiguity.
+
+
+
+
+🧠 How it works:
+Kubernetes measures CPU in millicores:
+
+1000m = 1000 millicores = 1 full CPU core
+
+500m = 0.5 core
+
+250m = 0.25 core
+
+✅ Examples:
+yaml
+Copy
+Edit
+resources:
+  requests:
+    cpu: "500m"    # Half a core
+  limits:
+    cpu: "1000m"   # One full core
+You can also write:
+
+yaml
+Copy
+Edit
+cpu: "1"   # This is the same as 1000m
+
+------------------------------------------------------------------------------------------------------------------------
+
+✅ Pod Definition File
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jenkins
+  labels:
+    app: jenkins
+spec:
+  containers:
+  - name: jenkins
+    image: jenkins/jenkins:lts
+    ports:
+    - containerPort: 8080
+    - containerPort: 50000
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+      limits:
+        memory: "1Gi"
+        cpu: "1"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

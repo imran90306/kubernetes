@@ -40,8 +40,8 @@ ip-192-168-43-109.us-east-2.compute.internal   Ready    <none>   6d    v1.32.3-e
 ip-192-168-48-58.us-east-2.compute.internal    Ready    <none>   21h   v1.32.3-eks-473151a ----No taint applied 
 
 🧪 Summary
-Node	Can Pod Be Scheduled Here?	Likely Outcome
-ip-192-168-14-49 (tainted, tolerated)	✅ Yes	❌ Less likely
+Node	Can Pod Be Scheduled Here?	 Likely Outcome
+ip-192-168-14-49 (tainted, tolerated)	 ✅ Yes	❌ Less likely
 ip-192-168-43-109 (untainted)	          ✅ Yes	✅ Preferred
 ip-192-168-48-58 (untainted)	          ✅ Yes	✅ Preferred
 

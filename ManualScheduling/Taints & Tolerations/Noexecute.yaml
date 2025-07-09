@@ -1,5 +1,19 @@
 if we have 3 workernodes namely workernode1, workernode2, workernode3
-Before applying the taint and toleration u have one pode running on workernode1 then u apply taint and toleration to the node1
-then it will evict all the pods that doesnt matches the toleration
+Before applying the taint and toleration u have one pode namely pod1 running on workernode1 then u apply taint and toleration to the node1
+then it will evict all the pods that doesnt matches the toleration (it will evict the pod1)
 
 
+✅ Pod Definition File with Toleration
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-toleration1
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  tolerations:
+  - key: "node"
+    operator: "Equal"
+    value: "mynode1"
+    effect: "NoExecute"

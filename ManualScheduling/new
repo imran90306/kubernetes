@@ -68,7 +68,48 @@ Edit
 kubectl apply -f deployment-with-affinity.yaml
 
 
+🧾 Your Setup Summary:
+Deployment with 3 replicas.
 
+All pods have label: app: my-app.
+
+2 worker nodes, both labeled with disktype=ssd.
+
+You are using:
+
+Node Affinity: Only schedule on nodes with disktype=ssd.
+
+Pod Anti-Affinity: Don't schedule a pod on a node if another pod with label app: my-app is already there.
+
+🔁 Let's simulate what will happen during scheduling:
+1. First pod:
+Scheduler finds any node with disktype=ssd → Node1 or Node2 are both valid.
+
+No other pods exist yet → no conflict with anti-affinity.
+
+Pod is scheduled on, say, Node1.
+
+2. Second pod:
+Still needs to go to a node with disktype=ssd.
+
+Pod anti-affinity says: "Don't go to a node that already has a pod with app: my-app."
+
+Node1 already has my-app → violates anti-affinity.
+
+So pod goes to Node2.
+
+3. Third pod:
+Needs disktype=ssd (both nodes qualify).
+
+But both nodes already have a my-app pod, so anti-affinity blocks scheduling.
+
+→ Pod remains in Pending state.
+
+✅ Final Result:
+Pod	Scheduled On	Reason
+Pod 1	Node1	Matches node affinity + no conflict with anti-affinity
+Pod 2	Node2	Matches node affinity + anti-affinity satisfied
+Pod 3	❌ Pending	Cannot find a node that satisfies both rules
 
 
 

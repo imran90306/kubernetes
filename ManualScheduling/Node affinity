@@ -1,0 +1,111 @@
+Node Affinity in Kubernetes is a mechanism that allows you to constrain which nodes your pod is eligible to be scheduled on, based on labels on nodes. It is part of scheduling rules, and is similar to nodeSelector, but more flexible and powerful.
+
+There are two main types of node affinity:
+
+RequiredDuringSchedulingIgnoredDuringExecution – Pod must be scheduled on matching nodes (hard requirement).
+
+PreferredDuringSchedulingIgnoredDuringExecution – Pod should be scheduled on matching nodes (soft preference).
+
+Suppose you have nodes labeled with:
+
+bash
+Copy
+Edit
+kubectl label nodes worker-node-1 disktype=ssd     (it is used to label the nodes)
+kubectl label nodes worker-node-2 disktype=hdd     (it is used to label the nodes)
+
+kubectl describe node <node-name>  ===>in the label section we will notice wether the labels is applied or not
+kubectl get nodes --show-labels    ====>it is also used to show the labels
+
+
+✅ Example Pod with Node Affinity (Hard Rule)
+nginx-pod-affinity.yaml
+
+yaml
+Copy
+Edit
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-affinity-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+✅ This pod will only schedule on nodes labeled disktype=ssd. If none are available, the pod stays in pending state.
+
+✅ Example with Preferred (Soft) Node Affinity
+nginx-pod-soft-affinity.yaml
+
+yaml
+Copy
+Edit
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-soft-affinity
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+✅ This pod prefers to be scheduled on disktype=ssd nodes, but will fall back to other nodes if none are available.
+
+🔴 requiredDuringSchedulingIgnoredDuringExecution (HARD Rule)
+Mandatory condition: The Pod will not be scheduled unless the node matches the criteria.
+
+If no matching node is available, the Pod will stay in a Pending state.
+
+Use case: When a workload must only run on certain nodes
+
+
+🟡 preferredDuringSchedulingIgnoredDuringExecution (SOFT Rule)
+Preferred condition: The scheduler will try to place the Pod on a node that matches the preference.
+
+If no matching node is available, the Pod will still be scheduled on any available node.
+
+Use case: When you'd like to use certain nodes, but not required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,86 @@
+✅ ✅ Combined Example
+Imagine:
+
+Your nodes are labeled: disktype=ssd
+
+You want:
+
+Pods to run only on ssd nodes.
+
+No two similar pods (e.g., same app) on the same node.
+
+👉 You use node affinity to pick the right nodes
+👉 You use pod anti-affinity to spread the pods across different nodes
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: disktype
+                operator: In
+                values:
+                - ssd
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - my-app
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: my-app-container
+        image: nginx
+        ports:
+        - containerPort: 80
+
+
+✅ What to do before applying:
+Make sure you label your nodes:
+
+bash
+Copy
+Edit
+kubectl label node <node-name> disktype=ssd
+Apply the file:
+
+bash
+Copy
+Edit
+kubectl apply -f deployment-with-affinity.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

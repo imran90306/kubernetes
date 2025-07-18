@@ -1,0 +1,72 @@
+✅ What is Pod Affinity in Kubernetes?
+Pod Affinity means:
+
+“Place this pod near/with other specific pods.”
+
+It tells the Kubernetes scheduler to place a new pod on a node where certain other pods already exist — based on labels.
+
+✅ Why is Pod Affinity useful?
+Use cases:
+
+To group related pods for faster communication (e.g., web + cache).
+
+To reuse shared local storage.
+
+To reduce latency between pods that must talk frequently.
+
+🔍 Types of Affinity:
+RequiredDuringScheduling – Hard rule. Pod will NOT be scheduled unless the rule matches.
+
+PreferredDuringScheduling – Soft rule. Kubernetes will try to follow it, but can schedule elsewhere if needed.
+
+🧾 YAML Example: Pod Affinity
+Let’s place an nginx pod on the same node as a pod labeled app: frontend.
+
+yaml
+Copy
+Edit
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-with-affinity
+  labels:
+    app: nginx
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - frontend
+          topologyKey: "kubernetes.io/hostname"
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+🔍 Explanation:
+labelSelector: matches pods with app=frontend.
+
+topologyKey: kubernetes.io/hostname: ensures pods are scheduled on the same node.
+
+requiredDuringScheduling...: must match, else pod won’t run.
+
+✅ Tip: Create a "frontend" pod first
+To make it work, first create a pod like this:
+
+yaml
+Copy
+Edit
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod
+  labels:
+    app: frontend
+spec:
+  containers:
+    - name: httpd
+      image: httpd

@@ -70,3 +70,149 @@ spec:
   containers:
     - name: httpd
       image: httpd
+
+
+
+
+
+✅ Pod Affinity with soft rule 
+
+create a pod first 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod
+  labels:
+    app: frontend
+spec:
+  containers:
+    - name: frontend
+      image: httpd
+
+
+
+Create a deployment with PodAffinity 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-affinity-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-nginx
+  template:
+    metadata:
+      labels:
+        app: my-nginx
+    spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: frontend
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+📌 Notes:
+preferredDuringSchedulingIgnoredDuringExecution: a soft rule
+
+topologyKey: kubernetes.io/hostname: try to schedule on same node
+
+app: frontend: the label of pods this one wants to run near
+
+
+❓ Why are my pods placed on different nodes, even with Pod Affinity (soft rule), and no matching pod existed before deployment?
+
+Your affinity rule says:
+
+"I prefer to run this pod on a node where a pod with app: frontend is already running."
+
+But when you applied the Deployment, there were:
+
+❌ No existing pods with label app: frontend
+
+❌ So no nodes matched your affinity condition
+
+So the Kubernetes scheduler:
+
+Ignored the preference because it’s not mandatory
+
+Placed pods on any available nodes based on other factors (like resource availability, taints, spread)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
